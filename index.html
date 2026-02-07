@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="manifest" href="manifest.json">7
+  <title>Split & Share</title><style>
+:root {
+    --bg: #f4f6f8;
+    --card: #fff;
+    --text: #111;
+    --primary: #2563eb;
+    --secondary: #64748b;
+    --danger: #dc2626;
+  }
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f1f5f9;
+      --primary: #3b82f6;
+      --secondary: #94a3b8;
+      --danger: #ef4444;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: Arial
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      transition: .3s
+    }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: bold
+    }
+    .btn-secondary {
+      background: var(--secondary)
+    }
+    .btn-danger {
+      background: var(--danger)
+    }
+    .card {
+      background: var(--card);
+      padding: 16px;
+      border-radius: 16px;
+      margin: 12px;
+      box-shadow: 0 4px 10px #0002
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px
+    }
+    input,select,textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: var(--bg);
+      color: var(--text)
+    }
+    textarea {
+      min-height: 130px
+    }
+    .screen {
+      display: none;
+      animation: fade .3s
+    }
+    .screen.active {
+      display: block
+    }
+    @keyframes fade {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1
+      }}
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px;
+      box-shadow: 0 -2px 8px #0002
+    }
+    nav button {
+      background: none;
+      color: var(--text)
+    }
+    nav button.active {
+      color: var(--primary)
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h3>Split & Share</h3>
+    <button onclick="toggleMenu()">☰</button>
+  </header>
+  <!-- Menu lateral --><div id="menu" class="card" style="display:none;position:fixed;top:60px;right:10px;z-index:10;width:90%;max-width:300px">
+    <h3>⚙️ Menu</h3>
+    <button onclick="mudarTela('config')">Configurações</button><br><br>
+    <button onclick="mudarTela('info')">Informações</button><br><br>
+    <button onclick="exportarTXT()">Exportar TXT</button><br><br>
+    <button onclick="exportarPDF()">Exportar PDF</button>
+  </div>
+  <!-- Tela Principal --><div id="home" class="screen active">
+    <div class="card">
+      <h3>👥 Participantes</h3>
+      <div class="row">
+        <input id="nome" placeholder="Nome">
+        <select id="bebe">
+          <option value="sim">Bebe 🍺</option>
+          <option value="nao">Não bebe 🚫</option>
+        </select>
+      </div>
+      <button onclick="addPessoa()">Adicionar</button>
+      <div id="lista"></div>
+    </div>
+    <div class="card">
+      <h3>💰 Gastos</h3>
+      <div class="row">
+        <input id="carne" type="number" placeholder="Carne">
+        <input id="bebida" type="number" placeholder="Bebida">
+      </div>
+      <input id="extras" type="number" placeholder="Extras">
+      <input id="taxa" type="number" placeholder="Taxa %">
+    </div>
+    <div class="card">
+      <h3>📊 Resultado</h3>
+      <button onclick="gerar()">Gerar</button>
+      <button class="btn-secondary" onclick="copiar()">Copiar</button>
+      <button class="btn-secondary" onclick="whats()">WhatsApp</button>
+      <textarea id="res" readonly></textarea>
+    </div>
+  </div>
+  <!-- Histórico --><div id="hist" class="screen">
+    <div class="card">
+      <h3>📚 Histórico</h3>
+      <button class="btn-danger" onclick="limparHist()">Limpar</button>
+      <div id="histArea"></div>
+    </div>
+  </div>
+  <!-- Configurações --><div id="config" class="screen">
+    <div class="card">
+      <h3>⚙️ Configurações</h3>
+      <button onclick="temaToggle()">🌗 Alternar Tema</button>
+    </div>
+  </div>
+  <!-- Informações --><div id="info" class="screen">
+    <div class="card">
+      <h3>ℹ️ Sobre</h3>
+      <p>
+        Split & Share<br><br>
+        Versão 2.0<br>
+        App para dividir contas de forma justa.<br><br>
+        Criado por Você 😎
+      </p>
+    </div>
+  </div>
+  <!-- Navegação inferior --><nav>
+    <button onclick="mudarTela('home')" id="bhome" class="active">🏠</button>
+    <button onclick="mudarTela('hist')" id="bhist">📚</button>
+    <button onclick="mudarTela('config')" id="bconf">⚙️</button>
+  </nav>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    let pessoas = [], hist = [], tema = 'light';
+
+    onload = ()=> {
+      pessoas = JSON.parse(localStorage.getItem('p') || '[]');
+      hist = JSON.parse(localStorage.getItem('h') || '[]');
+      tema = localStorage.getItem('t') || 'light';
+      aplicarTema();
+      render();
+      renderHist();
+    }
+
+    function save() {
+      localStorage.setItem('p', JSON.stringify(pessoas));
+      localStorage.setItem('h', JSON.stringify(hist));
+      localStorage.setItem('t', tema);
+    }
+
+    function toggleMenu() {
+      const m = document.getElementById('menu');
+      m.style.display = m.style.display === 'none'?'block': 'none';
+    }
+
+    function mudarTela(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      if (id === 'home')bhome.classList.add('active');
+      if (id === 'hist')bhist.classList.add('active');
+      if (id === 'config')bconf.classList.add('active');
+      document.getElementById('menu').style.display = 'none';
+    }
+
+    function addPessoa() {
+      const n = nome.value.trim();
+      if (!n)return;
+      pessoas.push({
+        n, b: bebe.value
+      });
+      nome.value = '';
+      save(); render();
+    }
+
+    function render() {
+      lista.innerHTML = '';
+      pessoas.forEach((p, i)=> {
+        lista.innerHTML += `<p>${p.n} ${p.b === 'sim'?'🍺': '🚫'} <button onclick="del(${i})">❌</button></p>`;
+      });
+    }
+
+    function del(i) {
+      pessoas.splice(i, 1); save(); render()}
+
+    function gerar() {
+      if (!pessoas.length)return alert('Sem pessoas');
+      const c=+carne.value || 0,
+      b=+bebida.value || 0,
+      e=+extras.value || 0,
+      t=+taxa.value || 0;
+      const tot = pessoas.length;
+      const beb = pessoas.filter(x => x.b === 'sim').length;
+      let txt = '',
+      g = 0;
+      pessoas.forEach(p => {
+        let v = c/tot+e/tot+(p.b === 'sim' && beb?b/beb: 0);
+        v += v*t/100; g += v;
+        txt += `${p.n}: R$ ${v.toFixed(2)}\n`;
+      });
+      txt += `Total: R$ ${g.toFixed(2)}`;
+      res.value = txt;
+      hist.unshift({
+        d: new Date().toLocaleString(), t: txt
+      });
+      if (hist.length > 20)hist.pop();
+      save(); renderHist();
+    }
+
+    function renderHist() {
+      histArea.innerHTML = '';
+      if (!hist.length)return histArea.innerHTML = 'Sem histórico';
+      hist.forEach((h, i)=> {
+        histArea.innerHTML += `<p><b>${h.d}</b><br><button onclick="ver(${i})">Ver</button></p>`;
+      });
+    }
+
+    function ver(i) {
+      res.value = hist[i].t; mudarTela('home')}
+    function limparHist() {
+      if (confirm('Apagar?')) {
+        hist = []; save(); renderHist()}}
+    function copiar() {
+      navigator.clipboard.writeText(res.value)}
+    function whats() {
+      if (!res.value)return; open('https://wa.me/?text='+encodeURIComponent(res.value))}
+
+    function temaToggle() {
+      tema = tema === 'light'?'dark': 'light'; aplicarTema(); save()}
+    function aplicarTema() {
+      document.body.dataset.theme = tema === 'dark'?'dark': ''
+    }
+
+    function exportarTXT() {
+      if (!hist.length)return;
+      let t = 'HISTÓRICO\n\n';
+      hist.forEach(h => t += h.d+'\n'+h.t+'\n\n');
+      download(t, 'historico.txt', 'text/plain');
+    }
+
+    function exportarPDF() {
+      if (!hist.length)return;
+      const {
+        jsPDF
+      } = window.jspdf; const d = new jsPDF(); let y = 10;
+      hist.forEach(h => {
+        d.text(h.d, 10, y); y += 6;
+        h.t.split('\n').forEach(l => {
+          d.text(l, 10, y); y += 6
+        });
+        y += 6;
+      });
+      d.save('historico.pdf');
+    }
+
+    function download(t, n, tp) {
+      const b = new Blob([t], {
+        type: tp
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(b); a.download = n; a.click();
+    }
+  </script>
+  
+  <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(() => console.log('PWA ativo'))
+    .catch(err => console.log('Erro SW:', err));
+}
+</script>
+</body>
+</html>
