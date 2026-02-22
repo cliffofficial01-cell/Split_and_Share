@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="manifest.json">
   <title>Split & Share</title><style>
 :root {
@@ -24,7 +24,7 @@
     }
     * {
       box-sizing: border-box;
-      font-family: Arial
+      font-family: Arial;
     }
     body {
       margin: 0;
@@ -38,7 +38,10 @@
       padding: 12px;
       display: flex;
       justify-content: space-between;
-      align-items: center
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0px;
     }
     button {
       border: none;
@@ -72,14 +75,19 @@
       border-radius: 8px;
       border: none;
       background: var(--bg);
-      color: var(--text)
+      color: var(--text);
+    }
+    input:focus{
+      outline: 1px solid #2563eb;
     }
     textarea {
+      outline: none;
       min-height: 130px
     }
     .screen {
       display: none;
-      animation: fade .3s
+      animation: fade .3s;
+      margin-top: 100px;
     }
     .screen.active {
       display: block
@@ -119,9 +127,7 @@
     <button onclick="toggleMenu()">☰</button>
   </header>
   <!-- Menu lateral --><div id="menu" class="card" style="display:none;position:fixed;top:60px;right:10px;z-index:10;width:90%;max-width:300px">
-    <h3>⚙️ Menu</h3>
-    <button onclick="mudarTela('config')">Configurações</button><br><br>
-    <button onclick="mudarTela('info')">Informações</button><br><br>
+    <h3>Menu</h3>
     <button onclick="exportarTXT()">Exportar TXT</button><br><br>
     <button onclick="exportarPDF()">Exportar PDF</button>
   </div>
@@ -131,8 +137,8 @@
       <div class="row">
         <input id="nome" placeholder="Nome">
         <select id="bebe">
-          <option value="sim">Bebe 🍺</option>
-          <option value="nao">Não bebe 🚫</option>
+          <option value="sim">Bebeu 🍺</option>
+          <option value="nao">Não bebeu 🚫</option>
         </select>
       </div>
       <button onclick="addPessoa()">Adicionar</button>
@@ -141,24 +147,30 @@
     <div class="card">
       <h3>💰 Gastos</h3>
       <div class="row">
-        <input id="carne" type="number" placeholder="Carne">
+        <input id="carne" type="number" placeholder="Comida">
         <input id="bebida" type="number" placeholder="Bebida">
       </div>
+      <br>
       <input id="extras" type="number" placeholder="Extras">
+      <br><br>
       <input id="taxa" type="number" placeholder="Taxa %">
     </div>
-    <div class="card">
+    <div class="card" style="margin-bottom: 80px;">
       <h3>📊 Resultado</h3>
-      <button onclick="gerar()">Gerar</button>
-      <button class="btn-secondary" onclick="copiar()">Copiar</button>
-      <button class="btn-secondary" onclick="whats()">WhatsApp</button>
-      <textarea id="res" readonly></textarea>
+      <textarea id="res" readonly style="max-width: 100%; min-width: 100%;"></textarea>
+      <br><br>
+      <center>
+        <button onclick="gerar()">Gerar</button>
+        <button class="btn-secondary" onclick="copiar()">Copiar</button>
+        <button style="background: rgb(15, 192, 15);" class="btn-secondary" onclick="whats()">WhatsApp</button>
+      </center>
     </div>
   </div>
   <!-- Histórico --><div id="hist" class="screen">
     <div class="card">
       <h3>📚 Histórico</h3>
       <button class="btn-danger" onclick="limparHist()">Limpar</button>
+      <br><br>
       <div id="histArea"></div>
     </div>
   </div>
@@ -166,6 +178,7 @@
     <div class="card">
       <h3>⚙️ Configurações</h3>
       <button onclick="temaToggle()">🌗 Alternar Tema</button>
+    <button onclick="mudarTela('info')">Informações</button><br><br>
     </div>
   </div>
   <!-- Informações --><div id="info" class="screen">
@@ -175,11 +188,11 @@
         Split & Share<br><br>
         Versão 2.0<br>
         App para dividir contas de forma justa.<br><br>
-        Criado por Você 😎
+        Criado por Lengi N. Kuanzambi (SlashBot009)
       </p>
     </div>
   </div>
-  <!-- Navegação inferior --><nav>
+  <!-- Navegação inferior --><nav style="margin-top: 50px;">
     <button onclick="mudarTela('home')" id="bhome" class="active">🏠</button>
     <button onclick="mudarTela('hist')" id="bhist">📚</button>
     <button onclick="mudarTela('config')" id="bconf">⚙️</button>
